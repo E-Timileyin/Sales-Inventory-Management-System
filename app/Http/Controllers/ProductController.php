@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -11,7 +12,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        //
+        return Product::all();
     }
 
     /**
@@ -19,7 +20,17 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric|min:0',
+            'quantity' => 'required|integer|min:0',
+            'sku' => 'required|string|unique:products,sku'
+        ]);
+
+        $product = Product::create($validated);
+        
+        return response()->json($product, 201);
     }
 
     /**
@@ -27,7 +38,7 @@ class ProductController extends Controller
      */
     public function show(string $id)
     {
-        //
+        return Product::findOrFail($id);
     }
 
     /**
@@ -35,7 +46,17 @@ class ProductController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $product = Product::findOrFail($id);
+        
+        $validated = $request->validate([
+            'description' => 'sometimes|string|max:255',
+            'price' => 'sometimes|numeric|min:0',
+            'quantity' => 'sometimes|integer|min:0',
+            'sku' => 'sometimes|string|unique:products,sku,' . $id
+        ]);
+
+        $product->update($validated);
+        return $product;
     }
 
     /**
@@ -43,6 +64,8 @@ class ProductController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $product = Product::findOrFail($id);
+        $product->delete();
+        return response()->noContent();
     }
 }

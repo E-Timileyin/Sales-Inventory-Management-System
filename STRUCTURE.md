@@ -23,3 +23,8 @@ app/
  ├─ Policies/  (Role-based access)
  ├─ Services/  (Business logic helpers)
  └─ Notifications/
+
+
+
+<!-- ALTER USER 'sales_user'@'localhost' IDENTIFIED BY '';  -->
+
